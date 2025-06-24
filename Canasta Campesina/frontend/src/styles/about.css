@@ -1,0 +1,223 @@
+/* frontend/src/styles/about.css */
+.about-page {
+  padding: var(--spacing-lg) 0;
+}
+
+/* About Hero */
+.about-hero {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-xl) 0;
+  background: linear-gradient(135deg, var(--primary-orange-light), var(--primary-orange));
+  color: var(--text-white);
+  border-radius: var(--border-radius-large);
+}
+
+.about-hero h1 {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.about-subtitle {
+  font-size: 1.3rem;
+  opacity: 0.9;
+}
+
+/* Mission and Vision */
+.mission-vision {
+  margin-bottom: var(--spacing-xl);
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.mission-card,
+.vision-card {
+  background: var(--bg-card);
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-light);
+  text-align: center;
+}
+
+.card-icon {
+  font-size: 3rem;
+  color: var(--primary-orange);
+  margin-bottom: var(--spacing-md);
+}
+
+.mission-card h2,
+.vision-card h2 {
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Services */
+.services-section {
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+}
+
+.services-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-xl);
+  color: var(--text-primary);
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.service-item {
+  background: var(--bg-card);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-light);
+  transition: transform 0.3s ease;
+}
+
+.service-item:hover {
+  transform: translateY(-5px);
+}
+
+.service-item i {
+  font-size: 2.5rem;
+  color: var(--primary-orange);
+  margin-bottom: var(--spacing-md);
+}
+
+.service-item h3 {
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Commitment */
+.commitment-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.commitment-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing-xl);
+  align-items: center;
+}
+
+.commitment-text h2 {
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.commitment-text ul {
+  list-style: none;
+  padding: 0;
+}
+
+.commitment-text li {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-secondary);
+}
+
+.commitment-text li i {
+  color: var(--primary-orange);
+}
+
+.commitment-image {
+  text-align: center;
+}
+
+.commitment-image i {
+  font-size: 8rem;
+  color: var(--primary-orange);
+  opacity: 0.7;
+}
+
+/* Stats */
+.stats-section {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-xl);
+  background: var(--bg-gray);
+  border-radius: var(--border-radius-large);
+}
+
+.stats-section h2 {
+  margin-bottom: var(--spacing-xl);
+  color: var(--text-primary);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.stat-item {
+  background: var(--bg-card);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-light);
+}
+
+.stat-number {
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--primary-orange);
+  margin-bottom: var(--spacing-xs);
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* CTA */
+.cta-section {
+  text-align: center;
+  padding: var(--spacing-xl);
+  background: linear-gradient(135deg, var(--primary-orange), var(--primary-orange-dark));
+  color: var(--text-white);
+  border-radius: var(--border-radius-large);
+}
+
+.cta-content h2 {
+  margin-bottom: var(--spacing-md);
+}
+
+.cta-content p {
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.9;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .about-hero h1 {
+    font-size: 2rem;
+  }
+  
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .commitment-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .commitment-image i {
+    font-size: 4rem;
+  }
+}

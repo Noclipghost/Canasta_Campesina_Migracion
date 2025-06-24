@@ -1,0 +1,108 @@
+/* frontend/src/styles/components.css */
+/* Estilos para componentes generales */
+
+/* Botones */
+.btn-sm {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.9rem;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: var(--text-white);
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+}
+
+/* Tablas */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-light);
+}
+
+th, td {
+  padding: var(--spacing-md);
+  text-align: left;
+  border-bottom: 1px solid var(--bg-gray);
+}
+
+th {
+  background-color: var(--primary-orange);
+  color: var(--text-white);
+  font-weight: 600;
+}
+
+tr:hover {
+  background-color: var(--bg-gray);
+}
+
+/* Manager headers */
+.manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.manager-header h2 {
+  color: var(--text-primary);
+}
+
+/* Role badges */
+.role-badge {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-small);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.role-badge.admin {
+  background-color: var(--primary-orange);
+  color: var(--text-white);
+}
+
+.role-badge.user {
+  background-color: var(--bg-gray);
+  color: var(--text-secondary);
+}
+
+/* Form groups */
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-orange);
+}

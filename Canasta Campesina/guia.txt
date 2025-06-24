@@ -1,0 +1,107 @@
+frontend/
+├── public/
+│   ├── index.html
+│   ├── favicon.ico
+│   └── manifest.json
+├── src/
+│   ├── components/
+│   │   ├── common/
+│   │   │   ├── Header.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   ├── Navigation.jsx
+│   │   │   └── DarkModeToggle.jsx
+│   │   ├── auth/
+│   │   │   ├── LoginForm.jsx
+│   │   │   ├── RegisterForm.jsx
+│   │   │   └── UserProfile.jsx
+│   │   ├── admin/
+│   │   │   ├── AdminPanel.jsx
+│   │   │   ├── ProductManager.jsx
+│   │   │   ├── CategoryManager.jsx
+│   │   │   ├── LocationManager.jsx
+│   │   │   ├── ProducerManager.jsx
+│   │   │   └── UserManager.jsx
+│   │   ├── products/
+│   │   │   ├── ProductGrid.jsx
+│   │   │   ├── ProductCard.jsx
+│   │   │   ├── ProductFilter.jsx
+│   │   │   └── ProductDetails.jsx
+│   │   └── cart/
+│   │       ├── Cart.jsx
+│   │       ├── CartItem.jsx
+│   │       ├── Checkout.jsx
+│   │       └── Receipt.jsx
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── Products.jsx
+│   │   ├── Login.jsx
+│   │   ├── Admin.jsx
+│   │   └── Cart.jsx
+│   ├── services/
+│   │   ├── api.js
+│   │   ├── auth.js
+│   │   └── cart.js
+│   ├── context/
+│   │   ├── AuthContext.jsx
+│   │   ├── CartContext.jsx
+│   │   └── ThemeContext.jsx
+│   ├── hooks/
+│   │   ├── useAuth.js
+│   │   ├── useCart.js
+│   │   └── useLocalStorage.js
+│   ├── utils/
+│   │   ├── constants.js
+│   │   ├── helpers.js
+│   │   └── validators.js
+│   ├── styles/
+│   │   ├── globals.css
+│   │   ├── variables.css
+│   │   ├── components.css
+│   │   └── responsive.css
+│   ├── App.jsx
+│   ├── App.css
+│   └── index.js
+├── package.json
+└── README.md
+backend/
+├── config/
+│   ├── database.js
+│   ├── config.js
+│   └── multer.js
+├── controllers/
+│   ├── authController.js
+│   ├── productController.js
+│   ├── categoryController.js
+│   ├── producerController.js
+│   ├── locationController.js
+│   ├── userController.js
+│   └── orderController.js
+├── middleware/
+│   ├── auth.js
+│   ├── admin.js
+│   └── validation.js
+├── models/
+│   ├── User.js
+│   ├── Product.js
+│   ├── Category.js
+│   ├── Producer.js
+│   ├── Location.js
+│   └── Order.js
+├── routes/
+│   ├── auth.js
+│   ├── products.js
+│   ├── categories.js
+│   ├── producers.js
+│   ├── locations.js
+│   ├── users.js
+│   └── orders.js
+├── utils/
+│   ├── generateToken.js
+│   ├── seedData.js
+│   └── validators.js
+├── uploads/
+├── app.js
+├── server.js
+├── package.json
+└── .env
+

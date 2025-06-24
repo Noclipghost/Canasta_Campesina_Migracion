@@ -1,0 +1,52 @@
+/* frontend/src/styles/responsive.css */
+/* Estilos responsive adicionales */
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 var(--spacing-xs);
+  }
+  
+  .btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.9rem;
+  }
+  
+  .hero h1 {
+    font-size: 1.8rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .features-grid,
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-tabs {
+    flex-direction: column;
+  }
+  
+  .tab-button {
+    justify-content: center;
+  }
+  
+  table {
+    font-size: 0.8rem;
+  }
+  
+  th, td {
+    padding: var(--spacing-xs);
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1400px;
+  }
+  
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}

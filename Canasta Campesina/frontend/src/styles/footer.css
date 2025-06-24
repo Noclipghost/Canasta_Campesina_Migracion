@@ -1,0 +1,138 @@
+/* frontend/src/styles/footer.css - Reemplazar el archivo completo */
+.footer {
+  background-color: var(--text-primary);
+  color: var(--text-white);
+  padding: var(--spacing-xl) 0 var(--spacing-md);
+  margin-top: auto;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.footer-section h3 {
+  color: var(--primary-orange);
+  margin-bottom: var(--spacing-md);
+  font-size: 1.5rem;
+}
+
+/* Títulos del footer que se adaptan al modo oscuro */
+.footer-section h4 {
+  color: var(--text-white);
+  margin-bottom: var(--spacing-md);
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+/* En modo oscuro, los títulos h4 deben ser más visibles */
+[data-theme="dark"] .footer-section h4 {
+  color: var(--primary-orange-light);
+}
+
+.footer-section p {
+  color: var(--text-light);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: var(--spacing-sm);
+}
+
+.footer-section ul li a {
+  color: var(--text-light);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+  color: var(--primary-orange);
+}
+
+/* Mejorar visibilidad de enlaces en modo oscuro */
+[data-theme="dark"] .footer-section ul li a {
+  color: #cccccc;
+}
+
+[data-theme="dark"] .footer-section ul li a:hover {
+  color: var(--primary-orange-light);
+}
+
+.social-links {
+  display: flex;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.social-links a {
+  color: var(--text-light);
+  font-size: 1.5rem;
+  transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+  color: var(--primary-orange);
+}
+
+/* Mejorar iconos sociales en modo oscuro */
+[data-theme="dark"] .social-links a {
+  color: #cccccc;
+}
+
+[data-theme="dark"] .social-links a:hover {
+  color: var(--primary-orange-light);
+}
+
+.contact-info p {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  color: var(--text-light);
+  transition: color 0.3s ease;
+}
+
+/* Mejorar información de contacto en modo oscuro */
+[data-theme="dark"] .contact-info p {
+  color: #cccccc;
+}
+
+.contact-info i {
+  color: var(--primary-orange);
+  width: 20px;
+}
+
+/* Iconos de contacto en modo oscuro */
+[data-theme="dark"] .contact-info i {
+  color: var(--primary-orange-light);
+}
+
+.footer-bottom {
+  border-top: 1px solid #444;
+  padding-top: var(--spacing-md);
+  text-align: center;
+  color: var(--text-light);
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Footer bottom en modo oscuro */
+[data-theme="dark"] .footer-bottom {
+  border-top-color: #666;
+  color: #cccccc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+}

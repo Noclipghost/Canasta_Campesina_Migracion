@@ -1,0 +1,122 @@
+/* frontend/src/styles/variables.css */
+/* Variables de colores basadas en la imagen proporcionada */
+:root {
+  /* Colores principales */
+  --primary-orange: #ff8c00;
+  --primary-orange-light: #ffa500;
+  --primary-orange-dark: #e67e00;
+  --secondary-yellow: #ffd700;
+  
+  /* Colores de fondo */
+  --bg-light: #ffffff;
+  --bg-gray: #f5f5f5;
+  --bg-card: #ffffff;
+  
+  /* Colores de texto */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-light: #999999;
+  --text-white: #ffffff;
+  
+  /* Colores para modo oscuro */
+  --dark-bg: #1a1a1a;
+  --dark-bg-secondary: #2d2d2d;
+  --dark-text: #ffffff;
+  --dark-text-secondary: #cccccc;
+  
+  /* Sombras */
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --shadow-heavy: 0 8px 16px rgba(0, 0, 0, 0.2);
+  
+  /* Bordes */
+  --border-radius: 8px;
+  --border-radius-small: 4px;
+  --border-radius-large: 12px;
+  
+  /* Espaciado */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* Breakpoints para responsive */
+  --mobile: 768px;
+  --tablet: 1024px;
+  --desktop: 1200px;
+}
+
+/* Modo oscuro */
+[data-theme="dark"] {
+  --bg-light: var(--dark-bg);
+  --bg-gray: var(--dark-bg-secondary);
+  --bg-card: var(--dark-bg-secondary);
+  --text-primary: var(--dark-text);
+  --text-secondary: var(--dark-text-secondary);
+}
+
+/* frontend/src/styles/variables.css - Agregar estas variables adicionales */
+:root {
+  /* Colores principales */
+  --primary-orange: #ff8c00;
+  --primary-orange-light: #ffa500;
+  --primary-orange-dark: #e67e00;
+  --secondary-yellow: #ffd700;
+  
+  /* Colores de fondo */
+  --bg-light: #ffffff;
+  --bg-gray: #f5f5f5;
+  --bg-card: #ffffff;
+  
+  /* Colores de texto */
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-light: #999999;
+  --text-white: #ffffff;
+  
+  /* Colores para modo oscuro */
+  --dark-bg: #1a1a1a;
+  --dark-bg-secondary: #2d2d2d;
+  --dark-text: #ffffff;
+  --dark-text-secondary: #cccccc;
+  --dark-text-light: #aaaaaa;
+  
+  /* Sombras */
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.15);
+  --shadow-heavy: 0 8px 16px rgba(0, 0, 0, 0.2);
+  
+  /* Bordes */
+  --border-radius: 8px;
+  --border-radius-small: 4px;
+  --border-radius-large: 12px;
+  
+  /* Espaciado */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  /* Breakpoints para responsive */
+  --mobile: 768px;
+  --tablet: 1024px;
+  --desktop: 1200px;
+}
+
+/* Modo oscuro - Variables actualizadas */
+[data-theme="dark"] {
+  --bg-light: var(--dark-bg);
+  --bg-gray: var(--dark-bg-secondary);
+  --bg-card: var(--dark-bg-secondary);
+  --text-primary: var(--dark-text);
+  --text-secondary: var(--dark-text-secondary);
+  --text-light: var(--dark-text-light);
+  
+  /* Sombras más sutiles en modo oscuro */
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --shadow-heavy: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+

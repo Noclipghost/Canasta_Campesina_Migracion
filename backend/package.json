@@ -2,10 +2,10 @@
   "name": "canasta-campesina-backend",
   "version": "1.0.0",
   "description": "Backend para Canasta Campesina - API REST con Node.js y MongoDB",
-  "main": "server.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
     "seed": "node utils/seedData.js",
     "test": "jest",
     "build": "echo 'Backend build complete'"

@@ -1,91 +1,96 @@
 // frontend/src/services/api.js
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
+
+// Configuración de URL base - detecta automáticamente el entorno
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? '/api'  // En Vercel, mismo dominio
+  : 'http://localhost:3000/api';  // En desarrollo local
 
 /**
- * Función helper para realizar peticiones HTTP con autenticación
+ * Helper function para manejar peticiones API
+ * @param {string} endpoint - Endpoint de la API
+ * @param {object} options - Opciones de fetch
+ * @returns {Promise<any>} - Datos de respuesta
  */
-const apiRequest = async (endpoint, options = {}) => {
+async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
   
-  // Obtener token de autenticación
+  // Headers por defecto
+  const defaultHeaders = {
+    'Content-Type': 'application/json',
+  };
+
+  // Agregar token de autenticación si existe
   const token = localStorage.getItem('token');
-  
+  if (token) {
+    defaultHeaders.Authorization = `Bearer ${token}`;
+  }
+
   const config = {
+    ...options,
     headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
+      ...defaultHeaders,
       ...options.headers,
     },
-    ...options,
   };
 
   try {
     const response = await fetch(url, config);
     
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({ message: 'Error en la solicitud' }));
+      throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
     }
     
-    const data = await response.json();
-    
-    // Si la respuesta tiene estructura {success: true, data: {...}}
-    if (data.success && data.data) {
-      return data.data;
-    }
-    
-    // Si la respuesta es directamente un array o objeto
-    return data;
-    
+    return await response.json();
   } catch (error) {
-    console.error('API Request Error:', error);
+    console.error('API request error:', error);
     throw error;
   }
-};
+}
 
 /**
- * Función helper para peticiones con FormData (archivos)
+ * Helper function para peticiones con FormData (archivos)
  */
-const apiRequestFormData = async (endpoint, formData, method = 'POST') => {
+async function apiRequestFormData(endpoint, formData, method = 'POST') {
   const url = `${API_BASE_URL}${endpoint}`;
-  const token = localStorage.getItem('token');
   
+  const token = localStorage.getItem('token');
+  const headers = {};
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   try {
     const response = await fetch(url, {
       method,
-      headers: {
-        ...(token && { Authorization: `Bearer ${token}` })
-      },
-      body: formData
+      headers,
+      body: formData,
     });
     
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({ message: 'Error en la solicitud' }));
+      throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
     }
     
-    const data = await response.json();
-    return data.data || data;
-    
+    return await response.json();
   } catch (error) {
-    console.error('API FormData Request Error:', error);
+    console.error('API FormData request error:', error);
     throw error;
   }
-};
+}
 
-// ========== PRODUCTOS ==========
+// ==================== PRODUCTOS ====================
 
 /**
  * Obtener todos los productos
  */
 export const getProducts = async () => {
   try {
-    const products = await apiRequest('/products');
-    console.log('Productos obtenidos del backend:', products);
-    return Array.isArray(products) ? products : products.products || [];
+    const response = await apiRequest('/products');
+    return Array.isArray(response) ? response : response.products || response.data?.products || [];
   } catch (error) {
-    console.error('Error al obtener productos del backend:', error);
-    return getMockProducts();
+    console.error('Error al obtener productos:', error);
+    return [];
   }
 };
 
@@ -94,8 +99,8 @@ export const getProducts = async () => {
  */
 export const getProductById = async (id) => {
   try {
-    const product = await apiRequest(`/products/${id}`);
-    return product.product || product;
+    const response = await apiRequest(`/products/${id}`);
+    return response.product || response.data?.product || response;
   } catch (error) {
     console.error('Error al obtener producto:', error);
     throw error;
@@ -109,10 +114,10 @@ export const createProduct = async (productData) => {
   try {
     const formData = new FormData();
     
-    // Agregar campos del producto
+    // Agregar campos de texto
     Object.keys(productData).forEach(key => {
-      if (key !== 'images') {
-        if (Array.isArray(productData[key])) {
+      if (key !== 'images' && productData[key] !== undefined) {
+        if (typeof productData[key] === 'object') {
           formData.append(key, JSON.stringify(productData[key]));
         } else {
           formData.append(key, productData[key]);
@@ -127,8 +132,8 @@ export const createProduct = async (productData) => {
       });
     }
     
-    const response = await apiRequestFormData('/products', formData, 'POST');
-    return response.product || response;
+    const result = await apiRequestFormData('/products', formData, 'POST');
+    return result.product || result.data?.product || result;
   } catch (error) {
     console.error('Error al crear producto:', error);
     throw error;
@@ -143,8 +148,8 @@ export const updateProduct = async (id, productData) => {
     const formData = new FormData();
     
     Object.keys(productData).forEach(key => {
-      if (key !== 'images') {
-        if (Array.isArray(productData[key])) {
+      if (key !== 'images' && productData[key] !== undefined) {
+        if (typeof productData[key] === 'object') {
           formData.append(key, JSON.stringify(productData[key]));
         } else {
           formData.append(key, productData[key]);
@@ -158,8 +163,8 @@ export const updateProduct = async (id, productData) => {
       });
     }
     
-    const response = await apiRequestFormData(`/products/${id}`, formData, 'PUT');
-    return response.product || response;
+    const result = await apiRequestFormData(`/products/${id}`, formData, 'PUT');
+    return result.product || result.data?.product || result;
   } catch (error) {
     console.error('Error al actualizar producto:', error);
     throw error;
@@ -171,81 +176,25 @@ export const updateProduct = async (id, productData) => {
  */
 export const deleteProduct = async (id) => {
   try {
-    await apiRequest(`/products/${id}`, { method: 'DELETE' });
-    return true;
+    return await apiRequest(`/products/${id}`, { method: 'DELETE' });
   } catch (error) {
     console.error('Error al eliminar producto:', error);
     throw error;
   }
 };
 
-/**
- * Filtrar productos
- */
-export const filterProducts = async (filters) => {
-  try {
-    const params = new URLSearchParams();
-    
-    console.log('Filtros enviados desde frontend:', filters);
-    
-    if (filters.category && filters.category !== '') {
-      params.append('category', filters.category);
-    }
-    if (filters.producer && filters.producer !== '') {
-      params.append('producer', filters.producer);
-    }
-    if (filters.location && filters.location !== '') {
-      params.append('location', filters.location);
-    }
-    if (filters.priceMin && filters.priceMin !== '') {
-      params.append('priceMin', filters.priceMin);
-    }
-    if (filters.priceMax && filters.priceMax !== '') {
-      params.append('priceMax', filters.priceMax);
-    }
-    if (filters.search && filters.search !== '') {
-      params.append('search', filters.search);
-    }
-
-    const url = `/products?${params.toString()}`;
-    console.log('URL de filtrado:', `${API_BASE_URL}${url}`);
-    
-    const products = await apiRequest(url);
-    console.log('Productos filtrados recibidos:', products);
-    
-    return Array.isArray(products) ? products : products.products || [];
-  } catch (error) {
-    console.error('Error al filtrar productos del backend:', error);
-    return [];
-  }
-};
-
-// ========== CATEGORÍAS ==========
+// ==================== CATEGORÍAS ====================
 
 /**
  * Obtener todas las categorías
  */
 export const getCategories = async () => {
   try {
-    const categories = await apiRequest('/categories');
-    console.log('Categorías obtenidas del backend:', categories);
-    return Array.isArray(categories) ? categories : categories.categories || [];
+    const response = await apiRequest('/categories');
+    return Array.isArray(response) ? response : response.categories || response.data?.categories || [];
   } catch (error) {
-    console.error('Error al obtener categorías del backend:', error);
-    return getMockCategories();
-  }
-};
-
-/**
- * Obtener categoría por ID
- */
-export const getCategoryById = async (id) => {
-  try {
-    const category = await apiRequest(`/categories/${id}`);
-    return category.category || category;
-  } catch (error) {
-    console.error('Error al obtener categoría:', error);
-    throw error;
+    console.error('Error al obtener categorías:', error);
+    return [];
   }
 };
 
@@ -254,11 +203,11 @@ export const getCategoryById = async (id) => {
  */
 export const createCategory = async (categoryData) => {
   try {
-    const category = await apiRequest('/categories', {
+    const result = await apiRequest('/categories', {
       method: 'POST',
-      body: JSON.stringify(categoryData)
+      body: JSON.stringify(categoryData),
     });
-    return category.category || category;
+    return result.category || result.data?.category || result;
   } catch (error) {
     console.error('Error al crear categoría:', error);
     throw error;
@@ -270,11 +219,11 @@ export const createCategory = async (categoryData) => {
  */
 export const updateCategory = async (id, categoryData) => {
   try {
-    const category = await apiRequest(`/categories/${id}`, {
+    const result = await apiRequest(`/categories/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(categoryData)
+      body: JSON.stringify(categoryData),
     });
-    return category.category || category;
+    return result.category || result.data?.category || result;
   } catch (error) {
     console.error('Error al actualizar categoría:', error);
     throw error;
@@ -286,40 +235,25 @@ export const updateCategory = async (id, categoryData) => {
  */
 export const deleteCategory = async (id) => {
   try {
-    await apiRequest(`/categories/${id}`, { method: 'DELETE' });
-    return true;
+    return await apiRequest(`/categories/${id}`, { method: 'DELETE' });
   } catch (error) {
     console.error('Error al eliminar categoría:', error);
     throw error;
   }
 };
 
-// ========== PRODUCTORES ==========
+// ==================== PRODUCTORES ====================
 
 /**
  * Obtener todos los productores
  */
 export const getProducers = async () => {
   try {
-    const producers = await apiRequest('/producers');
-    console.log('Productores obtenidos del backend:', producers);
-    return Array.isArray(producers) ? producers : producers.producers || [];
+    const response = await apiRequest('/producers');
+    return Array.isArray(response) ? response : response.producers || response.data?.producers || [];
   } catch (error) {
-    console.error('Error al obtener productores del backend:', error);
-    return getMockProducers();
-  }
-};
-
-/**
- * Obtener productor por ID
- */
-export const getProducerById = async (id) => {
-  try {
-    const producer = await apiRequest(`/producers/${id}`);
-    return producer.producer || producer;
-  } catch (error) {
-    console.error('Error al obtener productor:', error);
-    throw error;
+    console.error('Error al obtener productores:', error);
+    return [];
   }
 };
 
@@ -328,24 +262,11 @@ export const getProducerById = async (id) => {
  */
 export const createProducer = async (producerData) => {
   try {
-    const formData = new FormData();
-    
-    Object.keys(producerData).forEach(key => {
-      if (key !== 'avatar') {
-        if (Array.isArray(producerData[key])) {
-          formData.append(key, JSON.stringify(producerData[key]));
-        } else {
-          formData.append(key, producerData[key]);
-        }
-      }
+    const result = await apiRequest('/producers', {
+      method: 'POST',
+      body: JSON.stringify(producerData),
     });
-    
-    if (producerData.avatar) {
-      formData.append('avatar', producerData.avatar);
-    }
-    
-    const response = await apiRequestFormData('/producers', formData, 'POST');
-    return response.producer || response;
+    return result.producer || result.data?.producer || result;
   } catch (error) {
     console.error('Error al crear productor:', error);
     throw error;
@@ -357,24 +278,11 @@ export const createProducer = async (producerData) => {
  */
 export const updateProducer = async (id, producerData) => {
   try {
-    const formData = new FormData();
-    
-    Object.keys(producerData).forEach(key => {
-      if (key !== 'avatar') {
-        if (Array.isArray(producerData[key])) {
-          formData.append(key, JSON.stringify(producerData[key]));
-        } else {
-          formData.append(key, producerData[key]);
-        }
-      }
+    const result = await apiRequest(`/producers/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(producerData),
     });
-    
-    if (producerData.avatar) {
-      formData.append('avatar', producerData.avatar);
-    }
-    
-    const response = await apiRequestFormData(`/producers/${id}`, formData, 'PUT');
-    return response.producer || response;
+    return result.producer || result.data?.producer || result;
   } catch (error) {
     console.error('Error al actualizar productor:', error);
     throw error;
@@ -386,40 +294,25 @@ export const updateProducer = async (id, producerData) => {
  */
 export const deleteProducer = async (id) => {
   try {
-    await apiRequest(`/producers/${id}`, { method: 'DELETE' });
-    return true;
+    return await apiRequest(`/producers/${id}`, { method: 'DELETE' });
   } catch (error) {
     console.error('Error al eliminar productor:', error);
     throw error;
   }
 };
 
-// ========== UBICACIONES ==========
+// ==================== UBICACIONES ====================
 
 /**
  * Obtener todas las ubicaciones
  */
 export const getLocations = async () => {
   try {
-    const locations = await apiRequest('/locations');
-    console.log('Ubicaciones obtenidas del backend:', locations);
-    return Array.isArray(locations) ? locations : locations.locations || [];
+    const response = await apiRequest('/locations');
+    return Array.isArray(response) ? response : response.locations || response.data?.locations || [];
   } catch (error) {
-    console.error('Error al obtener ubicaciones del backend:', error);
-    return getMockLocations();
-  }
-};
-
-/**
- * Obtener ubicación por ID
- */
-export const getLocationById = async (id) => {
-  try {
-    const location = await apiRequest(`/locations/${id}`);
-    return location.location || location;
-  } catch (error) {
-    console.error('Error al obtener ubicación:', error);
-    throw error;
+    console.error('Error al obtener ubicaciones:', error);
+    return [];
   }
 };
 
@@ -428,11 +321,11 @@ export const getLocationById = async (id) => {
  */
 export const createLocation = async (locationData) => {
   try {
-    const location = await apiRequest('/locations', {
+    const result = await apiRequest('/locations', {
       method: 'POST',
-      body: JSON.stringify(locationData)
+      body: JSON.stringify(locationData),
     });
-    return location.location || location;
+    return result.location || result.data?.location || result;
   } catch (error) {
     console.error('Error al crear ubicación:', error);
     throw error;
@@ -444,11 +337,11 @@ export const createLocation = async (locationData) => {
  */
 export const updateLocation = async (id, locationData) => {
   try {
-    const location = await apiRequest(`/locations/${id}`, {
+    const result = await apiRequest(`/locations/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(locationData)
+      body: JSON.stringify(locationData),
     });
-    return location.location || location;
+    return result.location || result.data?.location || result;
   } catch (error) {
     console.error('Error al actualizar ubicación:', error);
     throw error;
@@ -460,39 +353,25 @@ export const updateLocation = async (id, locationData) => {
  */
 export const deleteLocation = async (id) => {
   try {
-    await apiRequest(`/locations/${id}`, { method: 'DELETE' });
-    return true;
+    return await apiRequest(`/locations/${id}`, { method: 'DELETE' });
   } catch (error) {
     console.error('Error al eliminar ubicación:', error);
     throw error;
   }
 };
 
-// ========== USUARIOS ==========
+// ==================== USUARIOS ====================
 
 /**
- * Obtener todos los usuarios
+ * Obtener todos los usuarios (solo admin)
  */
 export const getUsers = async () => {
   try {
-    const users = await apiRequest('/users');
-    return Array.isArray(users) ? users : users.users || [];
+    const response = await apiRequest('/users');
+    return Array.isArray(response) ? response : response.users || response.data?.users || [];
   } catch (error) {
     console.error('Error al obtener usuarios:', error);
-    throw error;
-  }
-};
-
-/**
- * Obtener usuario por ID
- */
-export const getUserById = async (id) => {
-  try {
-    const user = await apiRequest(`/users/${id}`);
-    return user.user || user;
-  } catch (error) {
-    console.error('Error al obtener usuario:', error);
-    throw error;
+    return [];
   }
 };
 
@@ -501,11 +380,11 @@ export const getUserById = async (id) => {
  */
 export const updateUser = async (id, userData) => {
   try {
-    const user = await apiRequest(`/users/${id}`, {
+    const result = await apiRequest(`/users/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(userData)
+      body: JSON.stringify(userData),
     });
-    return user.user || user;
+    return result.user || result.data?.user || result;
   } catch (error) {
     console.error('Error al actualizar usuario:', error);
     throw error;
@@ -517,116 +396,75 @@ export const updateUser = async (id, userData) => {
  */
 export const updateUserRole = async (id, role) => {
   try {
-    const user = await apiRequest(`/users/${id}/role`, {
+    const result = await apiRequest(`/users/${id}/role`, {
       method: 'PUT',
-      body: JSON.stringify({ role })
+      body: JSON.stringify({ role }),
     });
-    return user.user || user;
+    return result.user || result.data?.user || result;
   } catch (error) {
-    console.error('Error al actualizar rol de usuario:', error);
+    console.error('Error al actualizar rol:', error);
     throw error;
   }
 };
+
 /**
  * Eliminar usuario
  */
 export const deleteUser = async (id) => {
   try {
-    await apiRequest(`/users/${id}`, { method: 'DELETE' });
-    return true;
+    return await apiRequest(`/users/${id}`, { method: 'DELETE' });
   } catch (error) {
     console.error('Error al eliminar usuario:', error);
     throw error;
   }
 };
 
-// ========== AUTENTICACIÓN ==========
+// ==================== AUTENTICACIÓN ====================
 
 /**
- * Autenticar usuario
- */
-export const loginUser = async (credentials) => {
-  try {
-    const response = await apiRequest('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(credentials)
-    });
-    
-    console.log('Login response del backend:', response);
-    
-    if (response.success || response.user) {
-      return {
-        success: true,
-        user: response.user || response.data.user,
-        token: response.token || response.data.token
-      };
-    }
-    
-    throw new Error(response.message || 'Error en el login');
-    
-  } catch (error) {
-    console.error('Error en login del backend:', error);
-    
-    // Fallback a simulación para desarrollo
-    if (credentials.email === 'admin@canasta.com' && credentials.password === 'admin123') {
-      return {
-        success: true,
-        user: {
-          id: 1,
-          name: 'Administrador',
-          email: 'admin@canasta.com',
-          role: 'admin'
-        }
-      };
-    } else if (credentials.email === 'usuario@canasta.com' && credentials.password === 'user123') {
-      return {
-        success: true,
-        user: {
-          id: 2,
-          name: 'Usuario Demo',
-          email: 'usuario@canasta.com',
-          role: 'user'
-        }
-      };
-    } else {
-      throw new Error('Credenciales incorrectas');
-    }
-  }
-};
-
-/**
- * Registrar nuevo usuario
+ * Registrar usuario
  */
 export const registerUser = async (userData) => {
   try {
-    const response = await apiRequest('/auth/register', {
+    const result = await apiRequest('/auth/register', {
       method: 'POST',
-      body: JSON.stringify(userData)
+      body: JSON.stringify(userData),
     });
-    
-    return {
-      success: true,
-      user: response.user || response.data.user,
-      token: response.token || response.data.token
-    };
+    return result;
   } catch (error) {
     console.error('Error al registrar usuario:', error);
     throw error;
   }
 };
 
-// ========== PEDIDOS ==========
+/**
+ * Iniciar sesión
+ */
+export const loginUser = async (credentials) => {
+  try {
+    const result = await apiRequest('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    });
+    return result;
+  } catch (error) {
+    console.error('Error al iniciar sesión:', error);
+    throw error;
+  }
+};
+
+// ==================== PEDIDOS ====================
 
 /**
  * Obtener pedidos
  */
 export const getOrders = async () => {
   try {
-    const orders = await apiRequest('/orders');
-    return Array.isArray(orders) ? orders : orders.orders || [];
+    const response = await apiRequest('/orders');
+    return Array.isArray(response) ? response : response.orders || response.data?.orders || [];
   } catch (error) {
     console.error('Error al obtener pedidos:', error);
-    throw error;
+    return [];
   }
 };
 
@@ -635,11 +473,11 @@ export const getOrders = async () => {
  */
 export const createOrder = async (orderData) => {
   try {
-    const order = await apiRequest('/orders', {
+    const result = await apiRequest('/orders', {
       method: 'POST',
-      body: JSON.stringify(orderData)
+      body: JSON.stringify(orderData),
     });
-    return order.order || order;
+    return result.order || result.data?.order || result;
   } catch (error) {
     console.error('Error al crear pedido:', error);
     throw error;
@@ -647,61 +485,90 @@ export const createOrder = async (orderData) => {
 };
 
 /**
- * Actualizar estado del pedido
+ * Actualizar pedido
  */
-export const updateOrderStatus = async (id, status) => {
+export const updateOrder = async (id, orderData) => {
   try {
-    const order = await apiRequest(`/orders/${id}/status`, {
+    const result = await apiRequest(`/orders/${id}`, {
       method: 'PUT',
-      body: JSON.stringify({ status })
+      body: JSON.stringify(orderData),
     });
-    return order.order || order;
+    return result.order || result.data?.order || result;
   } catch (error) {
-    console.error('Error al actualizar estado del pedido:', error);
+    console.error('Error al actualizar pedido:', error);
     throw error;
   }
 };
 
-// ========== DATOS MOCK PARA FALLBACK ==========
-
-const getMockProducts = () => {
-  return [
-    {
-      _id: '1',
-      name: 'Manzanas Rojas Orgánicas (MOCK)',
-      description: 'Datos de prueba - Backend no conectado',
-      price: 15.99,
-      producer: { _id: '1', name: 'Finca Los Manzanos' },
-      category: { _id: '1', name: 'Frutas' },
-      images: [{ url: '/images/manzanas.jpg', isPrimary: true }],
-      stock: 100,
-      unit: 'kg',
-      isOrganic: true,
-      isAvailable: true,
-      isFeatured: true,
-      tags: ['manzana', 'orgánico']
-    }
-  ];
+/**
+ * Eliminar pedido
+ */
+export const deleteOrder = async (id) => {
+  try {
+    return await apiRequest(`/orders/${id}`, { method: 'DELETE' });
+  } catch (error) {
+    console.error('Error al eliminar pedido:', error);
+    throw error;
+  }
 };
 
-const getMockCategories = () => {
-  return [
-    { _id: '1', name: 'Frutas', description: 'Frutas frescas', icon: 'fas fa-apple-alt' },
-    { _id: '2', name: 'Verduras', description: 'Verduras frescas', icon: 'fas fa-carrot' },
-    { _id: '3', name: 'Lácteos', description: 'Productos lácteos', icon: 'fas fa-cheese' }
-  ];
+// ==================== UTILIDADES ====================
+
+/**
+ * Verificar estado de la API
+ */
+export const checkApiHealth = async () => {
+  try {
+    const response = await apiRequest('/health');
+    return response;
+  } catch (error) {
+    console.error('Error al verificar estado de la API:', error);
+    throw error;
+  }
 };
 
-const getMockProducers = () => {
-  return [
-    { _id: '1', name: 'Finca Los Manzanos', email: 'contacto@losmanzanos.com' },
-    { _id: '2', name: 'Lácteos San José', email: 'info@lacteossanjose.com' }
-  ];
-};
-
-const getMockLocations = () => {
-  return [
-    { _id: '1', city: 'Tunja', department: 'Boyacá' },
-    { _id: '2', city: 'Bogotá', department: 'Cundinamarca' }
-  ];
+export default {
+  // Productos
+  getProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  
+  // Categorías
+  getCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  
+  // Productores
+  getProducers,
+  createProducer,
+  updateProducer,
+  deleteProducer,
+  
+  // Ubicaciones
+  getLocations,
+  createLocation,
+  updateLocation,
+  deleteLocation,
+  
+  // Usuarios
+  getUsers,
+  updateUser,
+  updateUserRole,
+  deleteUser,
+  
+  // Autenticación
+  registerUser,
+  loginUser,
+  
+  // Pedidos
+  getOrders,
+  createOrder,
+  updateOrder,
+  deleteOrder,
+  
+  // Utilidades
+  checkApiHealth
 };
